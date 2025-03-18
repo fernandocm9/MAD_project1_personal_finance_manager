@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            // Center(child: Text('Tab 1 Content')),
             LogsPage(title: 'Logs'),
             GraphsPage(title: 'Graphs'),
           ],
@@ -55,6 +54,7 @@ class LogsPage extends StatefulWidget {
 
 class _LogsPageState extends State<LogsPage> {
   int _counter = 0;
+  int total = 0;
 
   void _incrementCounter() {
     setState(() {
@@ -64,7 +64,22 @@ class _LogsPageState extends State<LogsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Logs');
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text('Total: $total')),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
 
@@ -80,16 +95,27 @@ class GraphsPage extends StatefulWidget {
 }
 
 class _GraphsPageState extends State<GraphsPage> {
-  int _counter = 0;
+  // int _counter = 0;
+  int goal = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  // void _incrementCounter() {
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Text('Greetings from Graphs');
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text('Total: $goal')),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[],
+        ),
+      ),// This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
