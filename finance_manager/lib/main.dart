@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'finance_db.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,6 +48,7 @@ class LogsPage extends StatefulWidget {
 }
 
 class _LogsPageState extends State<LogsPage> {
+  final DatabaseHelper dbHelper = DatabaseHelper();
   late TextEditingController nameController;
   late TextEditingController categoryController;
   late TextEditingController amountController;
@@ -60,8 +62,9 @@ class _LogsPageState extends State<LogsPage> {
   void initState() {
     super.initState();
     nameController = TextEditingController();
-    categoryController = TextEditingController();
     amountController = TextEditingController();
+    
+    _fetchTransactions(); // Load transactions from DB
   }
 
   @override
@@ -72,34 +75,55 @@ class _LogsPageState extends State<LogsPage> {
     super.dispose();
   }
 
-  void _addTransaction() {
-    String name = nameController.text.trim();
-    String category = _selectedCategory;
-    int amount = int.tryParse(amountController.text) ?? 0;
+  void _fetchTransactions() async {
+  final data = await dbHelper.queryAllRows();
+  
+  setState(() {
+    transactions = data;
+    total = _calculateTotal(data);
+  });
+}
 
-    if (name.isEmpty || category.isEmpty || amount <= 0) return;
-
-    setState(() {
-      if (category == 'Paycheck' || category == 'Refund' || category == 'Dividends') {
-        total += amount;
+  int _calculateTotal(List<Map<String, dynamic>> transactions) {
+    int sum = 0;
+    for (var transaction in transactions) {
+      int amount = transaction['amount'];
+      if (transaction['category'] == 'Paycheck' ||
+          transaction['category'] == 'Refund' ||
+          transaction['category'] == 'Dividends') {
+        sum += amount;
       } else {
-        total -= amount;
+        sum -= amount;
       }
-
-      transactions.add({
-        'name': name,
-        'category': category,
-        'amount': amount,
-      });
-    });
-
-    // Clear text fields after adding
-    nameController.clear();
-    categoryController.clear();
-    amountController.clear();
-
-    print('Transaction added: $name, $category, $amount');
+    }
+    return sum;
   }
+
+
+  void _addTransaction() async {
+  String name = nameController.text.trim();
+  String category = _selectedCategory;
+  int amount = int.tryParse(amountController.text) ?? 0;
+
+  if (name.isEmpty || category.isEmpty || amount <= 0) return;
+
+  // Insert into SQLite database
+  Map<String, dynamic> row = {
+    'name': name,
+    'category': category,
+    'amount': amount,
+  };
+
+  await dbHelper.insert(row);
+
+  // Refresh transaction list from database
+  _fetchTransactions();
+
+  // Clear text fields after adding
+  nameController.clear();
+  amountController.clear();
+}
+
 
   @override
   Widget build(BuildContext context) {
