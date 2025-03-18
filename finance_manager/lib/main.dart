@@ -130,6 +130,9 @@ void _updateRow(int id, String name, String category, double amount) async {
     DatabaseHelper.columnAmount: amount,
   };
   final rowsAffected = await dbHelper.update(row);
+  nameController.clear();
+  amountController.clear();
+
   print('Updated $rowsAffected row(s)');
   _fetchTransactions();
   }
@@ -245,20 +248,27 @@ void _updateRow(int id, String name, String category, double amount) async {
     return Column(
       children: [
         AppBar(
-          title: Center(child: Text(total < 0 ? 'Total: -\$${-total}' : 'Total: \$${total}')),
+          title: Center(child: Text(total < 0 ? 'Total: -\$${(-total).toStringAsFixed(2)}' : 'Total: \$${total.toStringAsFixed(2)}')),
         ),
         Expanded(
           child: ListView.builder(
             itemCount: transactions.length,
             itemBuilder: (context, index) {
               final transaction = transactions[index];
-              return ListTile(
-                title: Text(transaction['name']),
-                subtitle: Text(transaction['category']),
-                onLongPress: () {_confirmDelete(transaction['_id']);},
-                onTap:() {_openEditTransactionDialog(transaction);},           
-                trailing: Text('\$${transaction['amount']}'),
-                tileColor: transaction['amount'] < 0 ? Colors.red : Colors.green,
+              return Padding(
+                padding:EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: ListTile(
+                  title: Text(transaction['name']),
+                  subtitle: Text(transaction['category']),
+                  onLongPress: () {_confirmDelete(transaction['_id']);},
+                  onTap:() {_openEditTransactionDialog(transaction);},           
+                  trailing: Text('\$${transaction['amount'].toStringAsFixed(2)}', style: TextStyle(fontSize: 15),),
+                  tileColor: transaction['amount'] < 0 ? Colors.red : Colors.green,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
               );
             },
           ),
