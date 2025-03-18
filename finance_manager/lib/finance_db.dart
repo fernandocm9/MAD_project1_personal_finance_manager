@@ -39,7 +39,7 @@ class DatabaseHelper {
         $columnId INTEGER PRIMARY KEY,
         $columnName TEXT NOT NULL,
         $columnCategory TEXT NOT NULL,
-        $columnAmount INTEGER NOT NULL
+        $columnAmount REAL NOT NULL
       )
     ''');
   }

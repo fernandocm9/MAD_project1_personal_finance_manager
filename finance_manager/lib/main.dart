@@ -55,7 +55,7 @@ class _LogsPageState extends State<LogsPage> {
 
   List<String> _categories = ['Paycheck', 'Refund', 'Dividends', 'Rent', 'Food', 'Entertainment', 'Bill'];
   String _selectedCategory = 'Paycheck';
-  int total = 0;
+  double total = 0;
   List<Map<String, dynamic>> transactions = [];
 
   @override
@@ -84,17 +84,11 @@ class _LogsPageState extends State<LogsPage> {
   });
 }
 
-  int _calculateTotal(List<Map<String, dynamic>> transactions) {
-    int sum = 0;
+  double _calculateTotal(List<Map<String, dynamic>> transactions) {
+    double sum = 0;
     for (var transaction in transactions) {
-      int amount = transaction['amount'];
-      if (transaction['category'] == 'Paycheck' ||
-          transaction['category'] == 'Refund' ||
-          transaction['category'] == 'Dividends') {
-        sum += amount;
-      } else {
-        sum -= amount;
-      }
+      double amount = transaction['amount'];
+      sum += amount;
     }
     return sum;
   }
@@ -103,9 +97,13 @@ class _LogsPageState extends State<LogsPage> {
   void _addTransaction() async {
   String name = nameController.text.trim();
   String category = _selectedCategory;
-  int amount = int.tryParse(amountController.text) ?? 0;
+  double amount = double.tryParse(amountController.text) ?? 0;
 
   if (name.isEmpty || category.isEmpty || amount <= 0) return;
+
+  if(category == 'Rent' || category == 'Food' || category == 'Entertainment' || category == 'Bill') {
+    amount = -amount;
+  }
 
   // Insert into SQLite database
   Map<String, dynamic> row = {
@@ -124,13 +122,31 @@ class _LogsPageState extends State<LogsPage> {
   amountController.clear();
 }
 
+void _updateRow(int id, String name, String category, double amount) async {
+  Map<String, dynamic> row = {
+    DatabaseHelper.columnId: id,
+    DatabaseHelper.columnName: name,
+    DatabaseHelper.columnCategory: category,
+    DatabaseHelper.columnAmount: amount,
+  };
+  final rowsAffected = await dbHelper.update(row);
+  print('Updated $rowsAffected row(s)');
+  _fetchTransactions();
+  }
+
+  void _deleteRow(int id) async {
+    final rowsDeleted = await dbHelper.delete(id);
+    print('Deleted $rowsDeleted row(s): row $id');
+    _fetchTransactions();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         AppBar(
-          title: Center(child: Text('Total: $total')),
+          title: Center(child: Text(total < 0 ? 'Total: -\$${-total}' : 'Total: \$${total}')),
         ),
         Expanded(
           child: ListView.builder(
@@ -141,6 +157,7 @@ class _LogsPageState extends State<LogsPage> {
                 title: Text(transaction['name']),
                 subtitle: Text(transaction['category']),
                 trailing: Text('\$${transaction['amount']}'),
+                tileColor: transaction['amount'] < 0 ? Colors.red : Colors.green,
               );
             },
           ),
