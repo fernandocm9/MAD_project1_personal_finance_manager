@@ -27,16 +27,16 @@ class MyApp extends StatelessWidget {
           title: Center(child: Text('CashFlow')),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'Tab 1'),
-              Tab(text: 'Tab 2'),
+              Tab(text: 'Logs'),
+              Tab(text: 'Graphs'),
             ],
           ),
         ),
         body: const TabBarView(
           children: [
             // Center(child: Text('Tab 1 Content')),
-            MyHomePage(title: 'sdf'),
-            Center(child: Text('Tab 2 Content')),
+            LogsPage(title: 'Logs'),
+            GraphsPage(title: 'Graphs'),
           ],
         ),
       )),
@@ -44,16 +44,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class LogsPage extends StatefulWidget {
+  const LogsPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LogsPage> createState() => _LogsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LogsPageState extends State<LogsPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -64,30 +64,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    return Text('Logs');
+  }
+}
+
+
+
+class GraphsPage extends StatefulWidget {
+  const GraphsPage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<GraphsPage> createState() => _GraphsPageState();
+}
+
+class _GraphsPageState extends State<GraphsPage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Greetings from Graphs');
   }
 }
