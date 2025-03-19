@@ -19,12 +19,20 @@ class MyApp extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: const Center(child: Text('CashFlow')),
-            bottom: const TabBar(
+            title: Center(child: Text('CashFlow')),
+            backgroundColor: const Color.fromARGB(255, 112, 188, 250),
+            bottom: TabBar(
               tabs: [
                 Tab(text: 'Logs'),
                 Tab(text: 'Graphs'),
               ],
+              labelColor: Colors.black,
+              unselectedLabelColor: const Color.fromARGB(255, 86, 86, 86),
+              indicator: BoxDecoration(
+                color: const Color.fromARGB(255, 112, 188, 250),
+                border: Border(top: BorderSide(color: Colors.black), left: BorderSide(color: Colors.black), right: BorderSide(color: Colors.black), bottom: BorderSide(color: Colors.orange, width: 5)),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
             ),
           ),
           body: const TabBarView(
@@ -50,7 +58,6 @@ class LogsPage extends StatefulWidget {
 class _LogsPageState extends State<LogsPage> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   late TextEditingController nameController;
-  late TextEditingController categoryController;
   late TextEditingController amountController;
 
   List<String> _categories = ['Paycheck', 'Refund', 'Dividends', 'Rent', 'Food', 'Entertainment', 'Bill'];
@@ -70,7 +77,6 @@ class _LogsPageState extends State<LogsPage> {
   @override
   void dispose() {
     nameController.dispose();
-    categoryController.dispose();
     amountController.dispose();
     super.dispose();
   }
@@ -95,14 +101,14 @@ class _LogsPageState extends State<LogsPage> {
 
 
   void _addTransaction() async {
-  String name = nameController.text.trim();
-  String category = _selectedCategory;
-  double amount = double.tryParse(amountController.text) ?? 0;
+    String name = nameController.text.trim();
+    String category = _selectedCategory;
+    double amount = double.tryParse(amountController.text) ?? 0;
 
-  if (name.isEmpty || category.isEmpty || amount <= 0) return;
+    if (name.isEmpty || category.isEmpty || amount <= 0) return;
 
-  if(category == 'Rent' || category == 'Food' || category == 'Entertainment' || category == 'Bill') {
-    amount = -amount;
+    if(category == 'Rent' || category == 'Food' || category == 'Entertainment' || category == 'Bill') {
+      amount = -amount;
   }
 
   // Insert into SQLite database
@@ -245,42 +251,51 @@ void _updateRow(int id, String name, String category, double amount) async {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AppBar(
-          title: Center(child: Text(total < 0 ? 'Total: -\$${(-total).toStringAsFixed(2)}' : 'Total: \$${total.toStringAsFixed(2)}')),
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(
+          child: Text(total < 0
+              ? 'Total: -\$${(-total).toStringAsFixed(2)}'
+              : 'Total: \$${total.toStringAsFixed(2)}'),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-              return Padding(
-                padding:EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  title: Text(transaction['name']),
-                  subtitle: Text(transaction['category']),
-                  onLongPress: () {_confirmDelete(transaction['_id']);},
-                  onTap:() {_openEditTransactionDialog(transaction);},           
-                  trailing: Text('\$${transaction['amount'].toStringAsFixed(2)}', style: TextStyle(fontSize: 15),),
-                  tileColor: transaction['amount'] < 0 ? Colors.red : Colors.green,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.black, width: 1),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        FloatingActionButton(
-          onPressed: _openAddTransactionDialog,
-          tooltip: 'Add Transaction',
-          child: const Icon(Icons.add),
-        ),
-      ],
+      ),
+      body: ListView.builder(
+        itemCount: transactions.length,
+        itemBuilder: (context, index) {
+          final transaction = transactions[index];
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: ListTile(
+              title: Text(transaction['name']),
+              subtitle: Text(transaction['category']),
+              onLongPress: () {
+                _confirmDelete(transaction['_id']);
+              },
+              onTap: () {
+                _openEditTransactionDialog(transaction);
+              },
+              trailing: Text(
+                '\$${transaction['amount'].toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 15),
+              ),
+              tileColor: transaction['amount'] < 0 ? Colors.red : Colors.green,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddTransactionDialog,
+        tooltip: 'Add Transaction',
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+
 
   Future<void> _openAddTransactionDialog() async {
     return showDialog<void>(
