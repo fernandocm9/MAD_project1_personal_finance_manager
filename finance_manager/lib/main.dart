@@ -426,7 +426,7 @@ class _GraphsPageState extends State<GraphsPage> {
   List<Color> incomeColors = [
     Colors.lightGreen,
     Colors.green,
-    Color(0xFF006400), // ✅ this is dark green
+    Color(0xFF006400), 
     Colors.teal,
   ];
 
@@ -439,12 +439,15 @@ class _GraphsPageState extends State<GraphsPage> {
 
   List<PieChartSectionData> _generateChartData(String type) {
     Map<String, double> categoryTotals = {};
+    double typeTotal = 0;
 
     for (var transaction in transactions) {
       if ((type == 'income' && transaction['amount'] > 0) ||
           (type == 'expense' && transaction['amount'] < 0)) {
+        double amount = transaction['amount'].abs();
         categoryTotals[transaction['category']] =
-            (categoryTotals[transaction['category']] ?? 0) + transaction['amount'].abs();
+            (categoryTotals[transaction['category']] ?? 0) + amount;
+        typeTotal += amount;
       }
     }
 
@@ -468,8 +471,7 @@ class _GraphsPageState extends State<GraphsPage> {
 
       return PieChartSectionData(
         value: entry.value,
-        title:
-            "${entry.key}\n${((entry.value / totalBalance) * 100).toStringAsFixed(1)}%",
+        title: "${entry.key}\n${((entry.value / typeTotal) * 100).toStringAsFixed(1)}%",
         color: color,
         radius: 60,
         titleStyle: const TextStyle(
@@ -477,6 +479,7 @@ class _GraphsPageState extends State<GraphsPage> {
       );
     }).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
