@@ -510,7 +510,7 @@ class _GraphsPageState extends State<GraphsPage> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[700]),
                 child: const Text("Edit Goal",
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(color: Colors.white, fontSize: 11)),
               )
             ],
           ),
