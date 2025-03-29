@@ -23,12 +23,13 @@ Welcome to **CashFlow**, a simple yet powerful personal finance tracking app bui
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
-- **Flutter**: For building the cross-platform mobile UI.
-- **SQLite**: Local database for storing transactions.
-- **fl_chart**: Beautiful pie charts for data visualization.
-- **Dart**: Programming language powering Flutter.
+- [Flutter](https://flutter.dev/): Cross-platform mobile UI
+- [Dart](https://dart.dev/): Programming language powering Flutter
+- [SQLite](https://www.sqlite.org/index.html): Local database storage
+- [fl_chart](https://pub.dev/packages/fl_chart): Pie chart and graph library
+
 
 ---
 
