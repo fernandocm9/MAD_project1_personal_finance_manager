@@ -22,7 +22,7 @@ Welcome to **CashFlow**, a simple yet powerful personal finance tracking app bui
   Income and expenses are represented in pie charts, making it easy to see spending patterns at a glance.
 
 - **Plus button**
-  Press plus button to create a task
+  Press plus button to create a transactions or tasks
 
 ---
 
